@@ -260,6 +260,28 @@ router.patch('/:id', (req, res) => {
   });
 });
 
+// Endpoint 6: DELETE Book by ID
+// DELETE /api/books/:id
+router.delete('/:id', (req, res) => {
+  const bookId = parseInt(req.params.id, 10);
+  const bookIndex = books.findIndex(b => b.id === bookId);
+
+  if (bookIndex === -1) {
+    return res.status(404).json({
+      status: 'error',
+      message: `Book with ID ${bookId} not found`
+    });
+  }
+
+  const deletedBook = books.splice(bookIndex, 1)[0];
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Book deleted successfully',
+    data: deletedBook
+  });
+});
+
 module.exports = {
   router,
   books // Export books array for other route operations (POST, PUT, DELETE)
