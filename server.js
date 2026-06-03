@@ -8,6 +8,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Routes
+const booksRouter = require('./routes/books');
+app.use('/api/books', booksRouter.router);
+
 // Root Endpoint / Health Check
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -16,7 +20,8 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       health: 'GET /',
-      books: 'GET /api/books'
+      books: 'GET /api/books',
+      bookDetails: 'GET /api/books/:id'
     }
   });
 });

@@ -1,0 +1,65 @@
+const express = require('express');
+const router = express.Router();
+
+// Mock database (In-memory storage)
+let books = [
+  {
+    id: 1,
+    judul: "Clean Code",
+    penulis: "Robert C. Martin",
+    tahun: 2008,
+    genre: "Programming",
+    stok: 10
+  },
+  {
+    id: 2,
+    judul: "The Pragmatic Programmer",
+    penulis: "Andrew Hunt, David Thomas",
+    tahun: 1999,
+    genre: "Programming",
+    stok: 7
+  },
+  {
+    id: 3,
+    judul: "Refactoring",
+    penulis: "Martin Fowler",
+    tahun: 2018,
+    genre: "Software Design",
+    stok: 5
+  }
+];
+
+// Endpoint 1: GET All Books
+// GET /api/books
+router.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Books retrieved successfully',
+    data: books
+  });
+});
+
+// Endpoint 2: GET Book by ID
+// GET /api/books/:id
+router.get('/:id', (req, res) => {
+  const bookId = parseInt(req.params.id, 10);
+  const book = books.find(b => b.id === bookId);
+
+  if (!book) {
+    return res.status(404).json({
+      status: 'error',
+      message: `Book with ID ${bookId} not found`
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Book retrieved successfully',
+    data: book
+  });
+});
+
+module.exports = {
+  router,
+  books // Export books array for other route operations (POST, PUT, DELETE)
+};
