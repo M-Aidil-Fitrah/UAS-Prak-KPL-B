@@ -59,7 +59,68 @@ router.get('/:id', (req, res) => {
   });
 });
 
+// Endpoint 3: POST Create Book
+// POST /api/books
+router.post('/', (req, res) => {
+  const { judul, penulis, tahun, genre, stok } = req.body;
+
+  // Validation
+  if (!judul || typeof judul !== 'string' || judul.trim() === '') {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Validation failed: "judul" is required and must be a non-empty string'
+    });
+  }
+
+  if (!penulis || typeof penulis !== 'string' || penulis.trim() === '') {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Validation failed: "penulis" is required and must be a non-empty string'
+    });
+  }
+
+  if (tahun === undefined || typeof tahun !== 'number' || isNaN(tahun)) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Validation failed: "tahun" is required and must be a number'
+    });
+  }
+
+  if (genre === undefined || typeof genre !== 'string' || genre.trim() === '') {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Validation failed: "genre" is required and must be a non-empty string'
+    });
+  }
+
+  if (stok === undefined || typeof stok !== 'number' || isNaN(stok)) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Validation failed: "stok" is required and must be a number'
+    });
+  }
+
+  const newId = books.length > 0 ? books[books.length - 1].id + 1 : 1;
+  const newBook = {
+    id: newId,
+    judul: judul.trim(),
+    penulis: penulis.trim(),
+    tahun,
+    genre: genre.trim(),
+    stok
+  };
+
+  books.push(newBook);
+
+  res.status(201).json({
+    status: 'success',
+    message: 'Book created successfully',
+    data: newBook
+  });
+});
+
 module.exports = {
   router,
   books // Export books array for other route operations (POST, PUT, DELETE)
 };
+
