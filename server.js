@@ -6,7 +6,18 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
+
+// Parse JSON and catch malformed JSON syntax errors
 app.use(express.json());
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({
+      status: 'error',
+      message: 'Invalid JSON format. Please check your request body syntax.'
+    });
+  }
+  next();
+});
 
 // Routes
 const booksRouter = require('./routes/books');
@@ -23,6 +34,24 @@ app.get('/', (req, res) => {
       books: 'GET /api/books',
       bookDetails: 'GET /api/books/:id'
     }
+  });
+});
+
+// 404 Route handler (Unmatched routes)
+app.use((req, res, next) => {
+  res.status(404).json({
+    status: 'error',
+    message: `Route not found: ${req.method} ${req.originalUrl}`
+  });
+});
+
+// Global Error Handler Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    status: 'error',
+    message: 'Something went wrong on the server',
+    error: process.env.NODE_ENV === 'production' ? {} : err.message
   });
 });
 
